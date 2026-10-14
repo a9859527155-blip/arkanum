@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="ARKANUM — цифровая алхимия. Портфолио независимого дизайнера и разработчика." />
+  <meta name="theme-color" content="#F5F1EA" />
+  <meta name="color-scheme" content="light" />
+  <title>ARKANUM — Digital Alchemy Portfolio</title>
+
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='28' fill='%23F5F1EA' stroke='%230A0A0A' stroke-width='2'/%3E%3Cpath d='M32 14L44 40H20z' fill='none' stroke='%23B8472A' stroke-width='2'/%3E%3Ccircle cx='32' cy='32' r='4' fill='%230A0A0A'/%3E%3C/svg%3E" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,400;1,9..144,600&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="css/style.css?v=1" />
+</head>
+<body>
+
+  <!-- SVG-фильтры для liquid-эффекта -->
+  <svg width="0" height="0" style="position:absolute">
+    <defs>
+      <filter id="liquid" x="-20%" y="-20%" width="140%" height="140%">
+        <feTurbulence id="turb" type="fractalNoise" baseFrequency="0.008 0.012" numOctaves="2" seed="7" result="noise"/>
+        <feDisplacementMap id="disp" in="SourceGraphic" in2="noise" scale="0" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+    </defs>
+  </svg>
+
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="site-header" id="siteHeader">
+    <div class="container header-in">
+      <a class="logo" href="#hero" aria-label="ARKANUM — home">
+        <span class="logo-rune" aria-hidden="true">✦</span>
+        <span class="logo-text">ARKANUM <small>MMXXVI</small></span>
+      </a>
+
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="#work" data-nav><span class="nav-idx">01</span>Works</a>
+        <a href="#philosophy" data-nav><span class="nav-idx">02</span>Philosophy</a>
+        <a href="#process" data-nav><span class="nav-idx">03</span>Process</a>
+        <a href="#expertise" data-nav><span class="nav-idx">04</span>Expertise</a>
+        <a href="#contact" data-nav><span class="nav-idx">05</span>Contact</a>
+      </nav>
+
+      <div class="header-actions">
+        <a href="#contact" class="btn-magnetic" data-magnetic>
+          <span class="btn-magnetic-in">Start a project</span>
+        </a>
+        <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="mnav">
+          <span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="mnav" id="mnav" aria-label="Mobile navigation">
+    <a href="#work"><span class="mnav-i">01</span>Works</a>
+    <a href="#philosophy"><span class="mnav-i">02</span>Philosophy</a>
+    <a href="#process"><span class="mnav-i">03</span>Process</a>
+    <a href="#expertise"><span class="mnav-i">04</span>Expertise</a>
+    <a href="#contact"><span class="mnav-i">05</span>Contact</a>
+    <p class="mnav-meta mono">DIGITAL ALCHEMY · EST. 2026</p>
+  </nav>
+
+  <main id="main">
+
+    <!-- ============ HERO ============ -->
+    <section class="hero" id="hero">
+      <div class="hero-grain" aria-hidden="true"></div>
+
+      <div class="container hero-inner">
+        <div class="hero-top mono">
+          <span class="hero-meta" data-reveal>PORTFOLIO / VOL. I</span>
+          <span class="hero-meta" data-reveal>N 40.70° / W 74.01°</span>
+        </div>
+
+        <h1 class="hero-title" data-liquid>
+          <span class="hero-line"><span class="hero-line-in" data-split>Arkanum</span></span>
+          <span class="hero-line"><span class="hero-line-in hero-line-italic" data-split>is the art of</span></span>
+          <span class="hero-line"><span class="hero-line-in" data-split>transmuting</span></span>
+          <span class="hero-line"><span class="hero-line-in hero-line-accent" data-split>ideas into</span></span>
+          <span class="hero-line"><span class="hero-line-in" data-split>interfaces.</span></span>
+        </h1>
+
+        <div class="hero-bottom">
+          <p class="hero-lead" data-reveal>
+            Независимый дизайнер и разработчик. Превращаю сырую идею в работающий цифровой продукт — с вниманием к типографике, движению и деталям, которые замечают.
+          </p>
+
+          <div class="hero-cta">
+            <a href="#work" class="btn-magnetic" data-magnetic>
+              <span class="btn-magnetic-in">Selected works</span>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2 8h12M10 4l4 4-4 4" stroke="currentColor" stroke-width="1.4"/></svg>
+            </a>
+            <div class="hero-scroll-cue mono" aria-hidden="true">
+              <span class="hero-scroll-label">SCROLL</span>
+              <span class="hero-scroll-bar"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-runes" aria-hidden="true">
+        <span data-reveal>✦</span>
+        <span data-reveal>◈</span>
+        <span data-reveal>⚘</span>
+        <span data-reveal>✺</span>
+      </div>
+    </section>
+
+    <!-- ============ MARQUEE ============ -->
+    <section class="marquee-section" aria-label="Disciplines">
+      <div class="marquee">
+        <div class="marquee-track">
+          <span class="mq-item">DIGITAL ALCHEMY</span><span class="mq-dot">✦</span>
+          <span class="mq-item">BRAND SYSTEMS</span><span class="mq-dot">✦</span>
+          <span class="mq-item">INTERFACE DESIGN</span><span class="mq-dot">✦</span>
+          <span class="mq-item">MOTION LANGUAGE</span><span class="mq-dot">✦</span>
+          <span class="mq-item">FRONTEND CRAFT</span><span class="mq-dot">✦</span>
+          <span class="mq-item">ART DIRECTION</span><span class="mq-dot">✦</span>
+          <span class="mq-item" aria-hidden="true">DIGITAL ALCHEMY</span><span class="mq-dot" aria-hidden="true">✦</span>
+          <span class="mq-item" aria-hidden="true">BRAND SYSTEMS</span><span class="mq-dot" aria-hidden="true">✦</span>
+          <span class="mq-item" aria-hidden="true">INTERFACE DESIGN</span><span class="mq-dot" aria-hidden="true">✦</span>
+          <span class="mq-item" aria-hidden="true">MOTION LANGUAGE</span><span class="mq-dot" aria-hidden="true">✦</span>
+          <span class="mq-item" aria-hidden="true">FRONTEND CRAFT</span><span class="mq-dot" aria-hidden="true">✦</span>
+          <span class="mq-item" aria-hidden="true">ART DIRECTION</span><span class="mq-dot" aria-hidden="true">✦</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ WORKS ============ -->
+    <section class="section" id="work">
+      <div class="container">
+        <header class="sec-head" data-num="01" data-reveal>
+          <div>
+            <p class="eyebrow mono"><span data-split>01 — SELECTED WORKS</span></p>
+            <h2 class="sec-title" data-split>Пять превращений <em>последних двух лет.</em></h2>
+          </div>
+          <p class="sec-lead" data-reveal>Каждый проект — алхимическая операция: сырая идея, процесс, результат. Кликай, чтобы увидеть детали.</p>
+        </header>
+
+        <div class="works">
+
+          <article class="work" data-cursor-hover>
+            <div class="work-visual">
+              <div class="work-img" style="background:linear-gradient(135deg,#B8472A 0%,#F5A27C 100%)">
+                <img src="https://picsum.photos/seed/arkanum-sol/1200/800" alt="SOL — платформа для архитекторов" loading="lazy" width="1200" height="800" />
+              </div>
+              <span class="work-num mono" aria-hidden="true">N°01</span>
+            </div>
+            <div class="work-info">
+              <div class="work-head">
+                <h3 class="work-title" data-split>Sol — архитектурная платформа</h3>
+                <span class="work-year mono">2025</span>
+              </div>
+              <p class="work-desc">B2B-платформа для управления объектами. Спроектировал и реализовал дизайн-систему, кастомные селекты, интерактивные планы этажей на SVG.</p>
+              <ul class="work-tags mono">
+                <li>PRODUCT</li><li>DESIGN SYSTEM</li><li>FRONTEND</li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="work work-reverse" data-cursor-hover>
+            <div class="work-visual">
+              <div class="work-img" style="background:linear-gradient(135deg,#0A0A0A 0%,#4A4540 100%)">
+                <img src="https://picsum.photos/seed/arkanum-nokt/1200/800" alt="NOKT — бренд часов" loading="lazy" width="1200" height="800" />
+              </div>
+              <span class="work-num mono" aria-hidden="true">N°02</span>
+            </div>
+            <div class="work-info">
+              <div class="work-head">
+                <h3 class="work-title" data-split>Nokt — независимые часы</h3>
+                <span class="work-year mono">2025</span>
+              </div>
+              <p class="work-desc">Айдентика и e-commerce для независимого часового бренда. Кинетический hero-блок, 3D-превью механизмов, кастомная типографика.</p>
+              <ul class="work-tags mono">
+                <li>BRAND</li><li>E-COMMERCE</li><li>WEBGL</li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="work" data-cursor-hover>
+            <div class="work-visual">
+              <div class="work-img" style="background:linear-gradient(135deg,#EDE7DA 0%,#B8472A 100%)">
+                <img src="https://picsum.photos/seed/arkanum-forma/1200/800" alt="FORMA — архитектурное бюро" loading="lazy" width="1200" height="800" />
+              </div>
+              <span class="work-num mono" aria-hidden="true">N°03</span>
+            </div>
+            <div class="work-info">
+              <div class="work-head">
+                <h3 class="work-title" data-split>Forma — портфолио бюро</h3>
+                <span class="work-year mono">2024</span>
+              </div>
+              <p class="work-desc">Сайт-гримуар для архитектурного бюро. Dark-luxury эстетика, калькулятор стоимости, bento-сетка цифр, лайтбокс проектов.</p>
+              <ul class="work-tags mono">
+                <li>PORTFOLIO</li><li>UX</li><li>DEV</li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="work work-reverse" data-cursor-hover>
+            <div class="work-visual">
+              <div class="work-img" style="background:linear-gradient(135deg,#8B8680 0%,#F5F1EA 100%)">
+                <img src="https://picsum.photos/seed/arkanum-lumen/1200/800" alt="Lumen — студия света" loading="lazy" width="1200" height="800" />
+              </div>
+              <span class="work-num mono" aria-hidden="true">N°04</span>
+            </div>
+            <div class="work-info">
+              <div class="work-head">
+                <h3 class="work-title" data-split>Lumen — студия света</h3>
+                <span class="work-year mono">2024</span>
+              </div>
+              <p class="work-desc">Каталог дизайнерского освещения с интерактивными сценариями. Hover-эффекты, показывающие свет в интерьере, конфигуратор светильников.</p>
+              <ul class="work-tags mono">
+                <li>CATALOG</li><li>INTERACTIVE</li><li>3D</li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="work" data-cursor-hover>
+            <div class="work-visual">
+              <div class="work-img" style="background:linear-gradient(135deg,#B8472A 0%,#0A0A0A 100%)">
+                <img src="https://picsum.photos/seed/arkanum-vell/1200/800" alt="Vell — издательство" loading="lazy" width="1200" height="800" />
+              </div>
+              <span class="work-num mono" aria-hidden="true">N°05</span>
+            </div>
+            <div class="work-info">
+              <div class="work-head">
+                <h3 class="work-title" data-split>Vell — независимое издательство</h3>
+                <span class="work-year mono">2024</span>
+              </div>
+              <p class="work-desc">Редакционный сайт с типографикой как главным инструментом. Variable fonts, kinetic-заголовки, подписка на рассылку.</p>
+              <ul class="work-tags mono">
+                <li>EDITORIAL</li><li>TYPOGRAPHY</li><li>CMS</li>
+              </ul>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PHILOSOPHY ============ -->
+    <section class="section philosophy" id="philosophy">
+      <div class="container">
+        <header class="sec-head" data-num="02" data-reveal>
+          <div>
+            <p class="eyebrow mono"><span data-split>02 — PHILOSOPHY</span></p>
+            <h2 class="sec-title" data-split>Три принципа, <em>на которых</em> я строю работу.</h2>
+          </div>
+        </header>
+
+        <div class="principles">
+
+          <article class="principle" data-reveal>
+            <span class="principle-num mono">I</span>
+            <h3 class="principle-title" data-split>Точность прежде красоты</h3>
+            <p class="principle-text">Красота интерфейса — следствие точности: сетки, ритма, иерархии, состояния покоя и движения. Когда всё выверено до пикселя — дизайн начинает дышать сам.</p>
+            <span class="principle-rune" aria-hidden="true">✦</span>
+          </article>
+
+          <article class="principle" data-reveal>
+            <span class="principle-num mono">II</span>
+            <h3 class="principle-title" data-split>Движение как язык</h3>
+            <p class="principle-text">Анимация — не украшение, а способ коммуникации. Она ведёт взгляд, объясняет состояние, создаёт ощущение материала. Правильный motion превращает интерфейс в опыт.</p>
+            <span class="principle-rune" aria-hidden="true">◈</span>
+          </article>
+
+          <article class="principle" data-reveal>
+            <span class="principle-num mono">III</span>
+            <h3 class="principle-title" data-split>Код как ремесло</h3>
+            <p class="principle-text">Я пишу код, который переживёт релиз. Чистая семантика, a11y, производительность, уважение к reduced-motion — это не «дополнительно», это базовый уровень качества.</p>
+            <span class="principle-rune" aria-hidden="true">⚘</span>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PROCESS ============ -->
+    <section class="section section-dark" id="process">
+      <div class="container">
+        <header class="sec-head sec-head-light" data-num="03" data-reveal>
+          <div>
+            <p class="eyebrow mono"><span data-split>03 — PROCESS</span></p>
+            <h2 class="sec-title" data-split>Пять стадий <em>превращения.</em></h2>
+          </div>
+          <p class="sec-lead" data-reveal>Каждый проект проходит через эти этапы. Сроки и границы каждого зафиксированы — неожиданностей не бывает.</p>
+        </header>
+
+        <ol class="process-list">
+          <li class="process-step" data-reveal>
+            <span class="step-num mono">01</span>
+            <div class="step-body">
+              <h3 class="step-title" data-split>Nigredo — разбор</h3>
+              <p class="step-desc">Двухчасовое интервью, анализ ниши, конкурентов, целевой аудитории. На выходе — документ с задачами, метриками и ограничениями.</p>
+              <span class="step-dur mono">3–5 ДНЕЙ</span>
+            </div>
+          </li>
+          <li class="process-step" data-reveal>
+            <span class="step-num mono">02</span>
+            <div class="step-body">
+              <h3 class="step-title" data-split>Albedo — очищение</h3>
+              <p class="step-desc">Wireframes, структура, сценарии. Чистим лишнее, оставляем только то, что действительно работает на задачу.</p>
+              <span class="step-dur mono">1–2 НЕДЕЛИ</span>
+            </div>
+          </li>
+          <li class="process-step" data-reveal>
+            <span class="step-num mono">03</span>
+            <div class="step-body">
+              <h3 class="step-title" data-split>Citrinitas — форма</h3>
+              <p class="step-desc">Визуальный язык, типографика, цвет, ключевые экраны. Утверждаем эстетику и дизайн-систему до начала кода.</p>
+              <span class="step-dur mono">2–3 НЕДЕЛИ</span>
+            </div>
+          </li>
+          <li class="process-step" data-reveal>
+            <span class="step-num mono">04</span>
+            <div class="step-body">
+              <h3 class="step-title" data-split>Rubedo — воплощение</h3>
+              <p class="step-desc">Разработка на чистом стеке. Пиксельная реализация, motion, адаптив, тесты. Еженедельные демо.</p>
+              <span class="step-dur mono">4–8 НЕДЕЛЬ</span>
+            </div>
+          </li>
+          <li class="process-step" data-reveal>
+            <span class="step-num mono">05</span>
+            <div class="step-body">
+              <h3 class="step-title" data-split>Quintessence — запуск</h3>
+              <p class="step-desc">Деплой, аналитика, обучение команды. Месяц поддержки и корректировок в подарок.</p>
+              <span class="step-dur mono">1 НЕДЕЛЯ</span>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ============ EXPERTISE ============ -->
+    <section class="section" id="expertise">
+      <div class="container">
+        <header class="sec-head" data-num="04" data-reveal>
+          <div>
+            <p class="eyebrow mono"><span data-split>04 — EXPERTISE</span></p>
+            <h2 class="sec-title" data-split>Инструменты, <em>которыми я владею.</em></h2>
+          </div>
+        </header>
+
+        <div class="expertise-grid">
+          <article class="exp-card exp-xl" data-reveal>
+            <p class="exp-num mono">01</p>
+            <h3 class="exp-title" data-split>Design & Art Direction</h3>
+            <p class="exp-text">Брендинг, дизайн-системы, editorial, motion. От логотипа до полного визуального языка.</p>
+            <ul class="exp-list mono">
+              <li>FIGMA</li><li>AFTER EFFECTS</li><li>BLENDER</li>
+            </ul>
+          </article>
+          <article class="exp-card" data-reveal>
+            <p class="exp-num mono">02</p>
+            <h3 class="exp-title" data-split>Frontend</h3>
+            <p class="exp-text">Vanilla JS, React, GSAP, Three.js, WebGL. Чистый, производительный, доступный код.</p>
+          </article>
+          <article class="exp-card" data-reveal>
+            <p class="exp-num mono">03</p>
+            <h3 class="exp-title" data-split>Typography</h3>
+            <p class="exp-text">Variable fonts, kinetic type, custom lettering. Типографика как главный инструмент.</p>
+          </article>
+          <article class="exp-card exp-wide" data-reveal>
+            <p class="exp-num mono">04</p>
+            <h3 class="exp-title" data-split>Motion Design</h3>
+            <p class="exp-text">Scroll-driven анимации, micro-interactions, page transitions, 3D-сцены. Движение как часть продукта.</p>
+            <ul class="exp-list mono">
+              <li>GSAP</li><li>LENIS</li><li>RIVE</li><li>LOTTIE</li>
+            </ul>
+          </article>
+          <article class="exp-card" data-reveal>
+            <p class="exp-num mono">05</p>
+            <h3 class="exp-title" data-split>Backend & CMS</h3>
+            <p class="exp-text">Node.js, Sanity, Contentful, headless architectures.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ MANIFESTO ============ -->
+    <section class="manifesto" id="manifesto">
+      <div class="container">
+        <p class="manifesto-label mono" data-reveal>MANIFESTO / 2026</p>
+        <blockquote class="manifesto-quote" data-split>
+          «Хороший дизайн незаметен.<br/>
+          Великий дизайн — неизбежен.»
+        </blockquote>
+        <p class="manifesto-sig mono" data-reveal>— ARKANUM</p>
+      </div>
+    </section>
+
+    <!-- ============ CONTACT ============ -->
+    <section class="section section-dark contact" id="contact">
+      <div class="container contact-grid">
+        <div class="contact-info" data-reveal>
+          <p class="eyebrow mono"><span data-split>05 — CONTACT</span></p>
+          <h2 class="sec-title" data-split>Готов превратить <em>вашу идею</em> в продукт.</h2>
+          <p class="sec-lead" data-reveal>Отвечаю в течение 24 часов. Беру 2–3 проекта в квартал, чтобы уделять каждому достаточно внимания.</p>
+
+          <ul class="c-rows mono">
+            <li><span>EMAIL</span><a href="mailto:hello@arkanum.demo">hello@arkanum.demo</a></li>
+            <li><span>TELEGRAM</span><a href="#">@arkanum</a></li>
+            <li><span>INSTAGRAM</span><a href="#">@arkanum.studio</a></li>
+            <li><span>BASED IN</span><b>LISBON / REMOTE</b></li>
+          </ul>
+        </div>
+
+        <div class="form-card" data-reveal>
+          <p class="demo-flag mono">DEMO MODE · DATA NOT SENT</p>
+          <form id="leadForm" novalidate>
+            <div class="form-body">
+              <div class="field">
+                <label class="field-label mono" for="fName">YOUR NAME</label>
+                <input type="text" id="fName" name="name" autocomplete="name" placeholder="How should I call you" />
+                <p class="field-err mono" role="alert">Please enter your name</p>
+              </div>
+              <div class="field">
+                <label class="field-label mono" for="fEmail">EMAIL</label>
+                <input type="email" id="fEmail" name="email" autocomplete="email" placeholder="you@domain.com" />
+                <p class="field-err mono" role="alert">Enter a valid email</p>
+              </div>
+              <div class="field">
+                <label class="field-label mono" for="fMsg">ABOUT THE PROJECT</label>
+                <textarea id="fMsg" name="message" rows="3" placeholder="Brief description"></textarea>
+              </div>
+              <button class="btn-magnetic btn-magnetic-big" type="submit" data-magnetic>
+                <span class="btn-magnetic-in">Send message</span>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2 8h12M10 4l4 4-4 4" stroke="currentColor" stroke-width="1.4"/></svg>
+              </button>
+              <p class="consent mono">By sending you agree to the privacy policy (demo)</p>
+            </div>
+            <div class="form-success" aria-live="polite">
+              <span class="success-rune">✦</span>
+              <h3 class="serif">Message received</h3>
+              <p>I'll get back to you within 24 hours.</p>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="f-brand">
+        <a class="logo" href="#hero" aria-label="ARKANUM — top">
+          <span class="logo-rune" aria-hidden="true">✦</span>
+          <span class="logo-text">ARKANUM <small>MMXXVI</small></span>
+        </a>
+        <p class="f-tagline">Digital alchemy for brands that refuse to be ordinary.</p>
+      </div>
+      <nav class="f-nav" aria-label="Footer navigation">
+        <p class="f-h mono">INDEX</p>
+        <a href="#work">Works</a><a href="#philosophy">Philosophy</a><a href="#process">Process</a><a href="#expertise">Expertise</a>
+      </nav>
+      <div class="f-social">
+        <p class="f-h mono">ELSEWHERE</p>
+        <a href="#">Instagram</a><a href="#">Behance</a><a href="#">Dribbble</a><a href="#">Read.cv</a>
+      </div>
+      <div class="f-legal">
+        <p class="f-h mono">STATUS</p>
+        <p class="mono f-status">AVAILABLE Q2 2026<br/>2 SLOTS REMAINING</p>
+      </div>
+    </div>
+    <div class="container footer-bottom mono">
+      <p>© <span id="year">2026</span> ARKANUM · ALL RIGHTS RESERVED</p>
+      <p>DEMO PORTFOLIO · DATA & PROJECTS ARE FICTIONAL</p>
+      <a href="#hero">BACK TO TOP ↑</a>
+    </div>
+  </footer>
+
+  <!-- Cursor -->
+  <div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+  <div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
+  <div class="cursor-label" id="cursorLabel" aria-hidden="true"></div>
+
+  <div class="toast mono" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="js/effects.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
