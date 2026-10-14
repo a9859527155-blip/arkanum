@@ -14,12 +14,12 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,400;1,9..144,600&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=1" />
+  <link rel="stylesheet" href="css/style.css?v=2" />
 </head>
 <body>
 
   <!-- SVG-фильтры для liquid-эффекта -->
-  <svg width="0" height="0" style="position:absolute">
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
     <defs>
       <filter id="liquid" x="-20%" y="-20%" width="140%" height="140%">
         <feTurbulence id="turb" type="fractalNoise" baseFrequency="0.008 0.012" numOctaves="2" seed="7" result="noise"/>
@@ -72,6 +72,7 @@
     <!-- ============ HERO ============ -->
     <section class="hero" id="hero">
       <div class="hero-grain" aria-hidden="true"></div>
+      <canvas class="hero-fx" id="heroFx" aria-hidden="true"></canvas>
 
       <div class="container hero-inner">
         <div class="hero-top mono">
@@ -79,12 +80,13 @@
           <span class="hero-meta" data-reveal>N 40.70° / W 74.01°</span>
         </div>
 
+        <!-- Заголовок: чистый CSS-въезд, без зависимости от JS -->
         <h1 class="hero-title" data-liquid>
-          <span class="hero-line"><span class="hero-line-in" data-split>Arkanum</span></span>
-          <span class="hero-line"><span class="hero-line-in hero-line-italic" data-split>is the art of</span></span>
-          <span class="hero-line"><span class="hero-line-in" data-split>transmuting</span></span>
-          <span class="hero-line"><span class="hero-line-in hero-line-accent" data-split>ideas into</span></span>
-          <span class="hero-line"><span class="hero-line-in" data-split>interfaces.</span></span>
+          <span class="hero-line"><span class="hero-line-in">Arkanum</span></span>
+          <span class="hero-line"><span class="hero-line-in hero-line-italic">is the art of</span></span>
+          <span class="hero-line"><span class="hero-line-in">transmuting</span></span>
+          <span class="hero-line"><span class="hero-line-in hero-line-accent">ideas into</span></span>
+          <span class="hero-line"><span class="hero-line-in">interfaces.</span></span>
         </h1>
 
         <div class="hero-bottom">
@@ -149,7 +151,9 @@
           <article class="work" data-cursor-hover>
             <div class="work-visual">
               <div class="work-img" style="background:linear-gradient(135deg,#B8472A 0%,#F5A27C 100%)">
-                <img src="https://picsum.photos/seed/arkanum-sol/1200/800" alt="SOL — платформа для архитекторов" loading="lazy" width="1200" height="800" />
+                <img src="https://picsum.photos/seed/arkanum-sol/1200/800"
+                     data-fb="https://images.unsplash.com/photo-1487958449943-2429e8be8625?auto=format&fit=crop&w=1200&q=70"
+                     alt="SOL — платформа для архитекторов" loading="lazy" width="1200" height="800" />
               </div>
               <span class="work-num mono" aria-hidden="true">N°01</span>
             </div>
@@ -168,7 +172,9 @@
           <article class="work work-reverse" data-cursor-hover>
             <div class="work-visual">
               <div class="work-img" style="background:linear-gradient(135deg,#0A0A0A 0%,#4A4540 100%)">
-                <img src="https://picsum.photos/seed/arkanum-nokt/1200/800" alt="NOKT — бренд часов" loading="lazy" width="1200" height="800" />
+                <img src="https://picsum.photos/seed/arkanum-nokt/1200/800"
+                     data-fb="https://images.unsplash.com/photo-1524805444758-0637185db734?auto=format&fit=crop&w=1200&q=70"
+                     alt="NOKT — бренд часов" loading="lazy" width="1200" height="800" />
               </div>
               <span class="work-num mono" aria-hidden="true">N°02</span>
             </div>
@@ -187,7 +193,9 @@
           <article class="work" data-cursor-hover>
             <div class="work-visual">
               <div class="work-img" style="background:linear-gradient(135deg,#EDE7DA 0%,#B8472A 100%)">
-                <img src="https://picsum.photos/seed/arkanum-forma/1200/800" alt="FORMA — архитектурное бюро" loading="lazy" width="1200" height="800" />
+                <img src="https://picsum.photos/seed/arkanum-forma/1200/800"
+                     data-fb="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=70"
+                     alt="FORMA — архитектурное бюро" loading="lazy" width="1200" height="800" />
               </div>
               <span class="work-num mono" aria-hidden="true">N°03</span>
             </div>
@@ -206,7 +214,9 @@
           <article class="work work-reverse" data-cursor-hover>
             <div class="work-visual">
               <div class="work-img" style="background:linear-gradient(135deg,#8B8680 0%,#F5F1EA 100%)">
-                <img src="https://picsum.photos/seed/arkanum-lumen/1200/800" alt="Lumen — студия света" loading="lazy" width="1200" height="800" />
+                <img src="https://picsum.photos/seed/arkanum-lumen/1200/800"
+                     data-fb="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=70"
+                     alt="Lumen — студия света" loading="lazy" width="1200" height="800" />
               </div>
               <span class="work-num mono" aria-hidden="true">N°04</span>
             </div>
@@ -225,7 +235,9 @@
           <article class="work" data-cursor-hover>
             <div class="work-visual">
               <div class="work-img" style="background:linear-gradient(135deg,#B8472A 0%,#0A0A0A 100%)">
-                <img src="https://picsum.photos/seed/arkanum-vell/1200/800" alt="Vell — издательство" loading="lazy" width="1200" height="800" />
+                <img src="https://picsum.photos/seed/arkanum-vell/1200/800"
+                     data-fb="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&w=1200&q=70"
+                     alt="Vell — издательство" loading="lazy" width="1200" height="800" />
               </div>
               <span class="work-num mono" aria-hidden="true">N°05</span>
             </div>
@@ -256,7 +268,6 @@
         </header>
 
         <div class="principles">
-
           <article class="principle" data-reveal>
             <span class="principle-num mono">I</span>
             <h3 class="principle-title" data-split>Точность прежде красоты</h3>
@@ -277,7 +288,6 @@
             <p class="principle-text">Я пишу код, который переживёт релиз. Чистая семантика, a11y, производительность, уважение к reduced-motion — это не «дополнительно», это базовый уровень качества.</p>
             <span class="principle-rune" aria-hidden="true">⚘</span>
           </article>
-
         </div>
       </div>
     </section>
@@ -388,10 +398,7 @@
     <section class="manifesto" id="manifesto">
       <div class="container">
         <p class="manifesto-label mono" data-reveal>MANIFESTO / 2026</p>
-        <blockquote class="manifesto-quote" data-split>
-          «Хороший дизайн незаметен.<br/>
-          Великий дизайн — неизбежен.»
-        </blockquote>
+        <blockquote class="manifesto-quote" data-split>«Хороший дизайн незаметен. Великий дизайн — неизбежен.»</blockquote>
         <p class="manifesto-sig mono" data-reveal>— ARKANUM</p>
       </div>
     </section>
@@ -480,11 +487,11 @@
   <!-- Cursor -->
   <div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
   <div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
-  <div class="cursor-label" id="cursorLabel" aria-hidden="true"></div>
+  <div class="cursor-label" id="cursorLabel" aria-hidden="true">VIEW</div>
 
   <div class="toast mono" id="toast" role="status" aria-live="polite"></div>
 
-  <script src="js/effects.js"></script>
-  <script src="js/main.js"></script>
+  <script src="js/effects.js?v=2"></script>
+  <script src="js/main.js?v=2"></script>
 </body>
 </html>

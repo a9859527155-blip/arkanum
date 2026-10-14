@@ -1,7 +1,7 @@
 /* ============================================================
-   ARKANUM · main.js
-   Smooth scroll · Menu · Reveal · Text split · Liquid cursor
-   Magnetic buttons · Form · Cursor · Year
+   ARKANUM · main.js (v2)
+   Smooth scroll (Lenis-like, нативный скроллбар сохранён)
+   Menu · Reveal · Text split · Liquid · Magnetic · Cursor · Form
    ============================================================ */
 (() => {
   'use strict';
@@ -10,66 +10,27 @@
   const $$ = (s, c = document) => [...c.querySelectorAll(s)];
   const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const FINE = matchMedia('(pointer: fine)').matches;
-  const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
   const lerp = (a, b, t) => a + (b - a) * t;
 
   document.documentElement.classList.add('js');
 
-  /* ============ SMOOTH SCROLL (inertia) ============ */
-  let scrollTarget = scrollY, scrollCurrent = scrollY;
-  let scrolling = false;
+  /* ---------- ФОЛБЭКИ КАРТИНОК ---------- */
+  $$('img[data-fb]').forEach(img => {
+    img.addEventListener('error', () => {
+      if (img.dataset.fbUsed) return;
+      img.dataset.fbUsed = '1';
+      img.src = img.dataset.fb;
+    }, { once: true });
+  });
 
-  const smoothEnabled = !RM && FINE && innerWidth > 900;
-
-  if (smoothEnabled) {
-    document.body.style.height = document.documentElement.scrollHeight + 'px';
-    document.body.style.position = 'fixed';
-    document.body.style.width = '100%';
-    document.body.style.top = '0';
-
-    addEventListener('scroll', () => { scrollTarget = scrollY; }, { passive: true });
-    addEventListener('resize', () => { document.body.style.height = document.documentElement.scrollHeight + 'px'; });
-
-    (function tick() {
-      scrollCurrent = lerp(scrollCurrent, scrollTarget, 0.09);
-      if (Math.abs(scrollTarget - scrollCurrent) < 0.5) scrollCurrent = scrollTarget;
-      document.body.style.transform = `translate3d(0, ${-scrollCurrent}px, 0)`;
-      requestAnimationFrame(tick);
-    })();
-
-    $$('a[href^="#"]').forEach(a => {
-      a.addEventListener('click', e => {
-        const id = a.getAttribute('href');
-        if (id.length < 2) return;
-        const target = $(id);
-        if (!target) return;
-        e.preventDefault();
-        const top = target.getBoundingClientRect().top + scrollCurrent;
-        scrollTarget = top - 60;
-        history.replaceState(null, '', id);
-      });
-    });
-  }
-
-  /* ============ HEADER + PROGRESS ============ */
-  const header = $('#siteHeader');
-  const progress = $('#scrollProgress');
-  const getScroll = () => smoothEnabled ? scrollCurrent : scrollY;
-
-  const onHeader = () => {
-    const y = getScroll();
-    header.classList.toggle('solid', y > 40);
-    const h = document.documentElement.scrollHeight - innerHeight;
-    progress.style.width = (h > 0 ? (y / h) * 100 : 0) + '%';
-  };
-
-  /* ============ MENU ============ */
+  /* ---------- МЕНЮ (объявлено раньше использования) ---------- */
   const burger = $('#burger');
-  const setMenu = (open) => {
+  function setMenu(open) {
     document.body.classList.toggle('menu-open', open);
     burger.setAttribute('aria-expanded', String(open));
     burger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
-  };
+  }
   burger.addEventListener('click', () => setMenu(!document.body.classList.contains('menu-open')));
   $$('#mnav a').forEach(a => a.addEventListener('click', () => setMenu(false)));
   $('#mnav').addEventListener('click', e => { if (e.target === e.currentTarget) setMenu(false); });
@@ -77,84 +38,138 @@
     if (e.key === 'Escape' && document.body.classList.contains('menu-open')) setMenu(false);
   });
 
-  /* ============ HERO READY ============ */
-  requestAnimationFrame(() => requestAnimationFrame(() =>
-    document.documentElement.classList.add('is-ready')
-  ));
-  addEventListener('load', () => setTimeout(() =>
-    document.documentElement.classList.add('is-ready'), 900
-  ));
+  /* ---------- SMOOTH SCROLL (Lenis-like) ----------
+     Нативный скролл и скроллбар НЕ трогаем: колёсико перехватываем,
+     целевую позицию догоняем через window.scrollTo + lerp. */
+  const smoothEnabled = !RM && FINE && innerWidth > 900;
+  let target = scrollY, current = scrollY, maxScroll = 0;
+  const measureMax = () => { maxScroll = Math.max(0, document.documentElement.scrollHeight - innerHeight); };
 
-  /* ============ REVEAL OBSERVER ============ */
+  if (smoothEnabled) {
+    document.documentElement.style.scrollBehavior = 'auto';
+    measureMax();
+    addEventListener('resize', measureMax);
+    addEventListener('load', measureMax);
+
+    addEventListener('wheel', (e) => {
+      if (document.body.classList.contains('menu-open')) return;
+      e.preventDefault();
+      const delta = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY;
+      target = clamp(target + delta, 0, maxScroll);
+    }, { passive: false });
+
+    // Пользователь потянул скроллбар / нажал клавиши — синхронизируемся
+    addEventListener('scroll', () => {
+      if (Math.abs(scrollY - current) > 2) { target = scrollY; current = scrollY; }
+    }, { passive: true });
+
+    (function tick() {
+      current = lerp(current, target, 0.1);
+      if (Math.abs(target - current) < .5) current = target;
+      if (Math.abs(scrollY - current) >= .5) scrollTo(0, current);
+      requestAnimationFrame(tick);
+    })();
+
+    $$('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const id = a.getAttribute('href');
+        if (id.length < 2) return;
+        const el = $(id);
+        if (!el) return;
+        e.preventDefault();
+        target = clamp(el.getBoundingClientRect().top + scrollY - 70, 0, maxScroll);
+        history.replaceState(null, '', id);
+        if (document.body.classList.contains('menu-open')) setMenu(false);
+      });
+    });
+  }
+
+  /* ---------- HEADER + PROGRESS ---------- */
+  const header = $('#siteHeader');
+  const progress = $('#scrollProgress');
+  const onHeader = () => {
+    header.classList.toggle('solid', scrollY > 40);
+    const h = document.documentElement.scrollHeight - innerHeight;
+    progress.style.width = (h > 0 ? (scrollY / h) * 100 : 0) + '%';
+  };
+  let ticking = false;
+  addEventListener('scroll', () => {
+    if (!ticking) { ticking = true; requestAnimationFrame(() => { onHeader(); ticking = false; }); }
+  }, { passive: true });
+  addEventListener('resize', onHeader);
+  onHeader();
+
+  /* ---------- REVEAL OBSERVER ---------- */
   const revealObs = new IntersectionObserver(entries => {
     entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in-view'); revealObs.unobserve(e.target); } });
   }, { threshold: .12, rootMargin: '0px 0px -6% 0px' });
   $$('[data-reveal]').forEach(el => revealObs.observe(el));
 
-  // Для text-split нужно отдельно отслеживать секции-родители
+  /* ---------- TEXT SPLIT (безопасный, по DOM-узлам) ---------- */
+  const wordWrap = (node) => {
+    const w = document.createElement('span'); w.className = 'word';
+    const wi = document.createElement('span'); wi.className = 'word-in';
+    wi.appendChild(node); w.appendChild(wi);
+    return w;
+  };
+  const splitEl = (el) => {
+    const nodes = [...el.childNodes];
+    const frag = document.createDocumentFragment();
+    nodes.forEach(node => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        node.textContent.split(/(\s+)/).forEach(part => {
+          if (!part) return;
+          if (/^\s+$/.test(part)) frag.append(document.createTextNode(part));
+          else frag.append(wordWrap(document.createTextNode(part)));
+        });
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        frag.append(wordWrap(node)); // <em> и пр. остаются целыми
+      }
+    });
+    el.textContent = '';
+    el.appendChild(frag);
+  };
+  $$('[data-split]').forEach(splitEl);
+
+  /* Секции получают .in-view → слова внутри въезжают */
   const splitObs = new IntersectionObserver(entries => {
     entries.forEach(e => {
-      if (e.isIntersecting) {
-        $$('[data-split]', e.target).forEach(s => s.closest('[data-reveal],.section,.hero,main')?.classList.add('in-view'));
-        e.target.classList.add('in-view');
-        splitObs.unobserve(e.target);
-      }
+      if (e.isIntersecting) { e.target.classList.add('in-view'); splitObs.unobserve(e.target); }
     });
   }, { threshold: .05 });
   $$('.section, .hero, .manifesto, .marquee-section').forEach(s => splitObs.observe(s));
 
-  /* ============ TEXT SPLIT (по словам) ============ */
-  $$('[data-split]').forEach(el => {
-    const html = el.innerHTML;
-    // Работаем только с текстом (без вложенных тегов кроме <em>)
-    const parts = html.split(/(\s+)/);
-    el.innerHTML = parts.map(part => {
-      if (/^\s+$/.test(part)) return part;
-      if (!part.trim()) return part;
-      // Если part содержит тег (например <em>...</em>), оставляем как есть
-      if (part.includes('<')) return part;
-      return `<span class="word"><span class="word-in">${part}</span></span>`;
-    }).join('');
-  });
-
-  /* ============ LIQUID CURSOR EFFECT ============ */
+  /* ---------- LIQUID-ЭФФЕКТ ЗАГОЛОВКА ---------- */
   const turb = $('#turb'), disp = $('#disp'), heroTitle = $('.hero-title');
-  let mouseX = 0, mouseY = 0, mouseVX = 0, mouseVY = 0, lastMX = 0, lastMY = 0;
-  let currentScale = 0, targetScale = 0;
+  let lastMX = 0, lastMY = 0, curScale = 0, tgtScale = 0;
 
   if (heroTitle && turb && disp && !RM) {
     addEventListener('mousemove', e => {
-      mouseX = e.clientX; mouseY = e.clientY;
-      const dx = mouseX - lastMX, dy = mouseY - lastMY;
-      mouseVX = dx; mouseVY = dy;
-      lastMX = mouseX; lastMY = mouseY;
-      const speed = Math.sqrt(dx*dx + dy*dy);
-      targetScale = clamp(speed * 1.8, 0, 40);
+      const dx = e.clientX - lastMX, dy = e.clientY - lastMY;
+      lastMX = e.clientX; lastMY = e.clientY;
+      tgtScale = clamp(Math.sqrt(dx * dx + dy * dy) * 1.6, 0, 36);
     });
-
     (function animateLiquid() {
-      currentScale = lerp(currentScale, targetScale, 0.12);
-      targetScale = lerp(targetScale, 0, 0.08);
-      disp.setAttribute('scale', currentScale.toFixed(2));
-      // Лёгкое колебание базовой частоты
+      curScale = lerp(curScale, tgtScale, 0.12);
+      tgtScale = lerp(tgtScale, 0, 0.08);
+      disp.setAttribute('scale', curScale.toFixed(2));
       const t = performance.now() / 1000;
-      const bx = 0.008 + Math.sin(t * 0.7) * 0.002;
-      const by = 0.012 + Math.cos(t * 0.9) * 0.002;
-      turb.setAttribute('baseFrequency', `${bx.toFixed(4)} ${by.toFixed(4)}`);
+      turb.setAttribute('baseFrequency',
+        `${(0.008 + Math.sin(t * .7) * .002).toFixed(4)} ${(0.012 + Math.cos(t * .9) * .002).toFixed(4)}`);
       requestAnimationFrame(animateLiquid);
     })();
   }
 
-  /* ============ MAGNETIC BUTTONS ============ */
+  /* ---------- MAGNETIC BUTTONS ---------- */
   if (FINE && !RM) {
     $$('[data-magnetic]').forEach(btn => {
       const inner = $('.btn-magnetic-in', btn);
       btn.addEventListener('mousemove', e => {
         const r = btn.getBoundingClientRect();
-        const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
-        const dx = e.clientX - cx, dy = e.clientY - cy;
-        btn.style.transform = `translate(${dx * 0.22}px, ${dy * 0.32}px)`;
-        if (inner) inner.style.transform = `translate(${dx * 0.1}px, ${dy * 0.1}px)`;
+        const dx = e.clientX - (r.left + r.width / 2);
+        const dy = e.clientY - (r.top + r.height / 2);
+        btn.style.transform = `translate(${dx * .22}px, ${dy * .32}px)`;
+        if (inner) inner.style.transform = `translate(${dx * .1}px, ${dy * .1}px)`;
       });
       btn.addEventListener('mouseleave', () => {
         btn.style.transform = '';
@@ -163,16 +178,7 @@
     });
   }
 
-  /* ============ SCROLL HANDLER ============ */
-  let ticking = false;
-  const onScrollFrame = () => { onHeader(); ticking = false; };
-  addEventListener('scroll', () => {
-    if (!ticking) { ticking = true; requestAnimationFrame(onScrollFrame); }
-  }, { passive: true });
-  addEventListener('resize', onHeader);
-  onHeader();
-
-  /* ============ CURSOR ============ */
+  /* ---------- CURSOR ---------- */
   if (FINE && !RM) {
     const dot = $('#cursorDot'), ring = $('#cursorRing'), label = $('#cursorLabel');
     document.documentElement.classList.add('has-cursor');
@@ -180,33 +186,22 @@
 
     addEventListener('mousemove', e => {
       mx = e.clientX; my = e.clientY;
-      if (!visible) { visible = true; rx = mx; ry = my; dot.style.opacity = ring.style.opacity = 1; }
+      if (!visible) { visible = true; rx = mx; ry = my; lx = mx; ly = my; dot.style.opacity = ring.style.opacity = 1; }
       dot.style.transform = `translate(${mx - 2.5}px, ${my - 2.5}px)`;
-
-      const t = e.target.closest('a,button,.work,[data-cursor-hover]');
-      ring.classList.toggle('is-hover', !!t);
-
-      // Label над works
-      const work = e.target.closest('.work');
-      if (work) {
-        label.textContent = 'VIEW';
-        label.classList.add('is-active');
-        lx = mx + 30; ly = my + 30;
-      } else {
-        label.classList.remove('is-active');
-      }
+      const interactive = e.target.closest('a,button,.work,[data-cursor-hover],.exp-card,.principle');
+      ring.classList.toggle('is-hover', !!interactive);
+      label.classList.toggle('is-active', !!e.target.closest('.work'));
     });
 
     document.addEventListener('mouseleave', () => {
-      dot.style.opacity = ring.style.opacity = 0; visible = false;
+      dot.style.opacity = ring.style.opacity = 0;
       label.classList.remove('is-active');
+      visible = false;
     });
 
     (function loop() {
-      rx = lerp(rx, mx, 0.18);
-      ry = lerp(ry, my, 0.18);
-      lx = lerp(lx, mx + 30, 0.18);
-      ly = lerp(ly, my + 30, 0.18);
+      rx = lerp(rx, mx, 0.18); ry = lerp(ry, my, 0.18);
+      lx = lerp(lx, mx + 26, 0.16); ly = lerp(ly, my + 26, 0.16);
       const half = ring.offsetWidth / 2;
       ring.style.transform = `translate(${rx - half}px, ${ry - half}px)`;
       label.style.transform = `translate(${lx}px, ${ly}px)`;
@@ -216,7 +211,7 @@
     $('#cursorDot')?.remove(); $('#cursorRing')?.remove(); $('#cursorLabel')?.remove();
   }
 
-  /* ============ FORM ============ */
+  /* ---------- FORM ---------- */
   const form = $('#leadForm'), fName = $('#fName'), fEmail = $('#fEmail');
   const toastEl = $('#toast'); let toastT;
   const toast = (msg) => {
@@ -225,9 +220,7 @@
     clearTimeout(toastT);
     toastT = setTimeout(() => toastEl.classList.remove('show'), 3000);
   };
-
   [fName, fEmail].forEach(i => i.addEventListener('input', () => i.closest('.field').classList.remove('invalid')));
-
   form.addEventListener('submit', e => {
     e.preventDefault();
     let ok = true, firstBad = null;
@@ -243,7 +236,7 @@
     toast('Message received (demo mode)');
   });
 
-  /* ============ YEAR ============ */
+  /* ---------- YEAR ---------- */
   const yearEl = $('#year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 })();
