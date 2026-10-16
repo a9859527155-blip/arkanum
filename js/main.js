@@ -1,8 +1,8 @@
 /* ============================================================
-   ARKANUM · main.js (v4)
-   Lenis-like smooth · Index overlay · Folio indicator · Reveal
-   Text split · Scramble · Liquid · Ink cursor (core+trail+pill)
-   3D tilt · Ritual accordion · Form · Year
+   ARKANUM · main.js (v5)
+   Lenis-like smooth · Index overlay · Folio (band observer)
+   Reveal · Split · Scramble · Liquid · Ink cursor (core+pill, NO trail)
+   3D tilt · Ritual accordion · Form · img-fallback race fix
    ============================================================ */
 (() => {
   'use strict';
@@ -15,14 +15,17 @@
 
   document.documentElement.classList.add('js');
 
-  /* ---------- IMG FALLBACKS ---------- */
-  $$('img[data-fb]').forEach(img => {
-    img.addEventListener('error', () => {
-      if (img.dataset.fbUsed) return;
+  /* ---------- IMG FALLBACKS (с защитой от гонки) ---------- */
+  const wireFallback = (img) => {
+    const swap = () => {
+      if (img.dataset.fbUsed || !img.dataset.fb) return;
       img.dataset.fbUsed = '1';
       img.src = img.dataset.fb;
-    }, { once: true });
-  });
+    };
+    img.addEventListener('error', swap, { once: true });
+    if (img.complete && img.naturalWidth === 0) swap(); // упала до навешивания слушателя
+  };
+  $$('img[data-fb]').forEach(wireFallback);
 
   /* ---------- INDEX OVERLAY ---------- */
   const indexBtn = $('#indexBtn'), indexClose = $('#indexClose'), overlay = $('#indexOverlay');
@@ -38,7 +41,7 @@
     if (e.key === 'Escape' && document.body.classList.contains('index-open')) setIndex(false);
   });
 
-  /* ---------- SMOOTH SCROLL (Lenis-like) ---------- */
+  /* ---------- SMOOTH SCROLL ---------- */
   const smoothEnabled = !RM && FINE && innerWidth > 900;
   let target = scrollY, current = scrollY, maxScroll = 0;
   const measureMax = () => { maxScroll = Math.max(0, document.documentElement.scrollHeight - innerHeight); };
@@ -75,8 +78,8 @@
     });
   }
 
-  /* ---------- TOPBAR + PROGRESS + FOLIO ---------- */
-  const topbar = $('#topbar'), progress = $('#scrollProgress'), folioNow = $('#folioNow');
+  /* ---------- TOPBAR + PROGRESS ---------- */
+  const progress = $('#scrollProgress');
   const onHeader = () => {
     const h = document.documentElement.scrollHeight - innerHeight;
     progress.style.width = (h > 0 ? (scrollY / h) * 100 : 0) + '%';
@@ -87,9 +90,14 @@
   }, { passive: true });
   onHeader();
 
+  /* ---------- FOLIO: observer по центральной полосе ----------
+     Ловит секцию любой высоты (в т.ч. очень высокую колоду II). */
+  const folioNow = $('#folioNow');
   const folioObs = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting && folioNow) folioNow.textContent = e.target.dataset.folio; });
-  }, { threshold: .3 });
+    entries.forEach(e => {
+      if (e.isIntersecting && folioNow) folioNow.textContent = e.target.dataset.folio;
+    });
+  }, { rootMargin: '-45% 0px -45% 0px', threshold: 0 });
   $$('[data-folio]').forEach(s => folioObs.observe(s));
 
   /* ---------- REVEAL ---------- */
@@ -165,7 +173,7 @@
     })();
   }
 
-  /* ---------- 3D TILT (deck) ---------- */
+  /* ---------- 3D TILT ---------- */
   if (FINE && !RM) {
     $$('[data-tilt]').forEach(card => {
       const max = 4;
@@ -190,32 +198,22 @@
     });
   });
 
-  /* ---------- INK CURSOR: core + trail + pill ---------- */
+  /* ---------- INK CURSOR: core + pill (БЕЗ шлейфа) ---------- */
   if (FINE && !RM) {
     const core = $('#cursorCore'), pill = $('#cursorPill'), spotlight = $('#spotlight');
     document.documentElement.classList.add('has-cursor');
-    const TRAIL = 7;
-    const trail = [];
-    for (let i = 0; i < TRAIL; i++) {
-      const d = document.createElement('div');
-      d.className = 'cursor-trail';
-      d.style.opacity = (0.4 * (1 - i / TRAIL)).toFixed(2);
-      d.style.width = d.style.height = (6 - i * 0.6) + 'px';
-      document.body.appendChild(d);
-      trail.push({ el: d, x: -100, y: -100 });
-    }
-    let mx = -100, my = -100, cx = -100, cy = -100, px = -100, py = -100, visible = false, scale = 1, scaleT = 1;
+    let mx = -100, my = -100, cx = -100, cy = -100, px = -100, py = -100;
+    let visible = false, scale = 1, scaleT = 1;
 
     addEventListener('mousemove', e => {
       mx = e.clientX; my = e.clientY;
-      if (!visible) {
-        visible = true;
-        core.style.opacity = 1;
-        trail.forEach(t => { t.x = mx; t.y = my; });
+      if (!visible) { visible = true; cx = mx; cy = my; core.style.opacity = 1; }
+      if (spotlight) {
+        spotlight.style.setProperty('--mx', mx + 'px');
+        spotlight.style.setProperty('--my', my + 'px');
       }
-      if (spotlight) { spotlight.style.setProperty('--mx', mx + 'px'); spotlight.style.setProperty('--my', my + 'px'); }
       const hot = e.target.closest('a,button,.deck-card,.ritual-row,.spec-row,.tenet,[data-cursor-hover]');
-      scaleT = hot ? 3.2 : 1;
+      scaleT = hot ? 3.4 : 1;
       const lbl = e.target.closest('[data-label]');
       if (lbl) { pill.textContent = lbl.dataset.label; pill.classList.add('on'); }
       else pill.classList.remove('on');
@@ -224,22 +222,14 @@
       visible = false;
       core.style.opacity = 0;
       pill.classList.remove('on');
-      trail.forEach(t => t.el.style.opacity = 0);
     });
 
     (function loop() {
-      cx = lerp(cx, mx, .22); cy = lerp(cy, my, .22);
+      cx = lerp(cx, mx, .28); cy = lerp(cy, my, .28);
       scale = lerp(scale, scaleT, .18);
       core.style.transform = `translate(${cx}px, ${cy}px) translate(-50%,-50%) scale(${scale.toFixed(2)})`;
       px = lerp(px, mx + 30, .16); py = lerp(py, my + 30, .16);
       pill.style.transform = `translate(${px}px, ${py}px) translate(-50%,-50%)`;
-      let fx = cx, fy = cy;
-      trail.forEach(t => {
-        t.x = lerp(t.x, fx, .35); t.y = lerp(t.y, fy, .35);
-        t.el.style.transform = `translate(${t.x}px, ${t.y}px) translate(-50%,-50%)`;
-        if (visible) t.el.style.opacity = '';
-        fx = t.x; fy = t.y;
-      });
       requestAnimationFrame(loop);
     })();
   } else {
