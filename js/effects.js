@@ -1,5 +1,5 @@
 /* ============================================================
-   ARKANUM · effects.js (v2)
+   ARKANUM · effects.js (v6)
    Чернильные пылинки на hero. Автостоп вне вьюпорта и в фоне.
    ============================================================ */
 (() => {
@@ -47,7 +47,7 @@
       const alpha = p.a * (.5 + .5 * Math.sin(t / 1100 + p.ph * 2));
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(10,10,10,${alpha.toFixed(3)})`;
+      ctx.fillStyle = `rgba(18,16,13,${alpha.toFixed(3)})`;
       ctx.fill();
     }
     rafId = requestAnimationFrame(tick);

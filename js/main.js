@@ -1,8 +1,9 @@
 /* ============================================================
-   ARKANUM · main.js (v5)
-   Lenis-like smooth · Index overlay · Folio (band observer)
-   Reveal · Split · Scramble · Liquid · Ink cursor (core+pill, NO trail)
-   3D tilt · Ritual accordion · Form · img-fallback race fix
+   ARKANUM · main.js (v6)
+   scrollRestoration=manual · event-driven smooth scroll (idle-safe)
+   Index overlay · Folio band observer · Reveal · Split · Scramble
+   Liquid · Tilt · Ritual · Ink cursor (core+pill) · Spotlight
+   Img fallbacks: error ИЛИ таймаут 2.5s · Form · Year
    ============================================================ */
 (() => {
   'use strict';
@@ -15,7 +16,10 @@
 
   document.documentElement.classList.add('js');
 
-  /* ---------- IMG FALLBACKS (с защитой от гонки) ---------- */
+  /* Браузер больше не дёргает скролл при загрузке */
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+
+  /* ---------- IMG FALLBACKS: ошибка ИЛИ таймаут 2.5s ---------- */
   const wireFallback = (img) => {
     const swap = () => {
       if (img.dataset.fbUsed || !img.dataset.fb) return;
@@ -23,7 +27,8 @@
       img.src = img.dataset.fb;
     };
     img.addEventListener('error', swap, { once: true });
-    if (img.complete && img.naturalWidth === 0) swap(); // упала до навешивания слушателя
+    if (img.complete && img.naturalWidth === 0) { swap(); return; }
+    setTimeout(() => { if (!img.complete || img.naturalWidth === 0) swap(); }, 2500);
   };
   $$('img[data-fb]').forEach(wireFallback);
 
@@ -41,30 +46,47 @@
     if (e.key === 'Escape' && document.body.classList.contains('index-open')) setIndex(false);
   });
 
-  /* ---------- SMOOTH SCROLL ---------- */
+  /* ---------- SMOOTH SCROLL v6 (event-driven, idle-safe) ----------
+     Пока анимации нет — scrollTo не вызывается вообще.
+     Любой нативный скролл в простое усыновляется как текущая позиция. */
   const smoothEnabled = !RM && FINE && innerWidth > 900;
   let target = scrollY, current = scrollY, maxScroll = 0;
+  let rafId = null, running = false;
+
   const measureMax = () => { maxScroll = Math.max(0, document.documentElement.scrollHeight - innerHeight); };
+  const sync = () => { target = current = scrollY; };
+
+  const loop = () => {
+    current = lerp(current, target, 0.12);
+    if (Math.abs(target - current) < .5) {
+      current = target;
+      scrollTo(0, current);
+      running = false; rafId = null;
+      return;
+    }
+    scrollTo(0, current);
+    rafId = requestAnimationFrame(loop);
+  };
+  const kick = () => { if (!running) { running = true; rafId = requestAnimationFrame(loop); } };
+  const halt = () => { if (rafId) cancelAnimationFrame(rafId); rafId = null; running = false; };
+
   if (smoothEnabled) {
     document.documentElement.style.scrollBehavior = 'auto';
     measureMax();
-    addEventListener('resize', measureMax);
-    addEventListener('load', measureMax);
+
     addEventListener('wheel', e => {
       if (document.body.classList.contains('index-open')) return;
       e.preventDefault();
       const d = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY;
       target = clamp(target + d, 0, maxScroll);
+      kick();
     }, { passive: false });
+
     addEventListener('scroll', () => {
-      if (Math.abs(scrollY - current) > 2) { target = scrollY; current = scrollY; }
+      if (!running) { sync(); return; }
+      if (Math.abs(scrollY - current) > 60) { halt(); sync(); }
     }, { passive: true });
-    (function tick() {
-      current = lerp(current, target, 0.1);
-      if (Math.abs(target - current) < .5) current = target;
-      if (Math.abs(scrollY - current) >= .5) scrollTo(0, current);
-      requestAnimationFrame(tick);
-    })();
+
     $$('a[href^="#"]').forEach(a => {
       a.addEventListener('click', e => {
         const id = a.getAttribute('href');
@@ -72,10 +94,19 @@
         const el = $(id);
         if (!el) return;
         e.preventDefault();
+        measureMax();
         target = clamp(el.getBoundingClientRect().top + scrollY - 70, 0, maxScroll);
         history.replaceState(null, '', id);
+        kick();
       });
     });
+
+    addEventListener('resize', () => { measureMax(); if (!running) sync(); });
+    addEventListener('load', () => { measureMax(); if (!running) sync(); });
+    if ('ResizeObserver' in window) new ResizeObserver(() => measureMax()).observe(document.body);
+  } else {
+    addEventListener('load', measureMax);
+    addEventListener('resize', measureMax);
   }
 
   /* ---------- TOPBAR + PROGRESS ---------- */
@@ -90,13 +121,10 @@
   }, { passive: true });
   onHeader();
 
-  /* ---------- FOLIO: observer по центральной полосе ----------
-     Ловит секцию любой высоты (в т.ч. очень высокую колоду II). */
+  /* ---------- FOLIO (центральная полоса) ---------- */
   const folioNow = $('#folioNow');
   const folioObs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting && folioNow) folioNow.textContent = e.target.dataset.folio;
-    });
+    entries.forEach(e => { if (e.isIntersecting && folioNow) folioNow.textContent = e.target.dataset.folio; });
   }, { rootMargin: '-45% 0px -45% 0px', threshold: 0 });
   $$('[data-folio]').forEach(s => folioObs.observe(s));
 
@@ -150,7 +178,7 @@
   };
   $$('[data-scramble]').forEach(el => {
     const obs = new IntersectionObserver(es => {
-      es.forEach(e => { if (e.isIntersecting) { if (!RM) scrambleEl(el); obs.unobserve(el); } });
+      es.forEach(e => { if (e.isIntersecting) { if (!RM) scrambleEl(el); obs.unobserve(e); } });
     }, { threshold: .4 });
     obs.observe(el);
   });
@@ -198,7 +226,7 @@
     });
   });
 
-  /* ---------- INK CURSOR: core + pill (БЕЗ шлейфа) ---------- */
+  /* ---------- INK CURSOR (core + pill) + SPOTLIGHT ---------- */
   if (FINE && !RM) {
     const core = $('#cursorCore'), pill = $('#cursorPill'), spotlight = $('#spotlight');
     document.documentElement.classList.add('has-cursor');
@@ -224,13 +252,13 @@
       pill.classList.remove('on');
     });
 
-    (function loop() {
+    (function loopCursor() {
       cx = lerp(cx, mx, .28); cy = lerp(cy, my, .28);
       scale = lerp(scale, scaleT, .18);
       core.style.transform = `translate(${cx}px, ${cy}px) translate(-50%,-50%) scale(${scale.toFixed(2)})`;
       px = lerp(px, mx + 30, .16); py = lerp(py, my + 30, .16);
       pill.style.transform = `translate(${px}px, ${py}px) translate(-50%,-50%)`;
-      requestAnimationFrame(loop);
+      requestAnimationFrame(loopCursor);
     })();
   } else {
     $('#cursorCore')?.remove(); $('#cursorPill')?.remove(); $('#spotlight')?.remove();
